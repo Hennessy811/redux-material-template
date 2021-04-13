@@ -1,7 +1,10 @@
-import { Container, createMuiTheme, ThemeProvider, useMediaQuery } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Button, Container, createMuiTheme, ThemeProvider, useMediaQuery } from '@material-ui/core';
 import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Home from './pages/Home';
+import Payments from './pages/Payments';
+import Requests from './pages/Requests';
+import Layout from './shared/components/Layout';
 import Notifications from './shared/components/Notifications';
 import useTheme from './shared/hooks/useTheme';
 
@@ -16,6 +19,12 @@ function App() {
       createMuiTheme({
         palette: {
           type: (prefferedTheme === 'system' && prefersDarkMode) || prefferedTheme === 'dark' ? 'dark' : 'light',
+          primary: {
+            main: '#4CA64B',
+          },
+          secondary: {
+            main: '#333333',
+          },
         },
         typography: {
           h1: {
@@ -35,12 +44,22 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box>
-        <Container maxWidth="sm">
-          <Typography>Hello world</Typography>
-        </Container>
+      <BrowserRouter>
+        <Layout>
+          <Switch>
+            <Route path="/" exact>
+              <Home />
+            </Route>
+            <Route path="/pay" exact>
+              <Payments />
+            </Route>
+            <Route path="/requests" exact>
+              <Requests />
+            </Route>
+          </Switch>
+        </Layout>
         <Notifications />
-      </Box>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
