@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+export const balance = 1689540.42;
 
 const Layout: FC = ({ children }) => {
   const classes = useStyles();
   const history = useHistory();
-  const balance = 1689540.42;
 
   return (
     <Box className={classes.root}>

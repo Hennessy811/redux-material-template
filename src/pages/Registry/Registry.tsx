@@ -1,7 +1,7 @@
 import { Box, Button, Chip, Divider, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
-import { ArrowBack, DoneAll } from '@material-ui/icons';
+import { ArrowBack, DoneAll, KeyboardArrowDown } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getPriceStr } from '../../shared/utils/formatters';
 import { changeState, selectData, selectRequestItem } from '../../store/features/data';
@@ -11,6 +11,8 @@ import { useConfirm } from 'material-ui-confirm';
 import { emit } from '../../store/features/notifications';
 import { motion } from 'framer-motion';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@material-ui/data-grid';
+import QuickActions from '../../shared/components/QuickActions';
+import cn from 'classnames';
 
 const columns: GridColDef[] = [
   { field: 'fullName', headerName: 'ФИО', width: 160 },
@@ -26,6 +28,20 @@ const useStyles = makeStyles({
     position: 'absolute',
     left: 0,
     top: 55,
+  },
+  table: {
+    height: 300,
+    transition: 'all 0.2s',
+    overflow: 'hidden',
+  },
+  collapse: {
+    transition: 'all 0.2s',
+  },
+  collapseActive: {
+    transform: 'rotate(180deg)',
+  },
+  tableHidden: {
+    height: 0,
   },
   root: {
     marginTop: (props: { img: boolean }) => (props.img ? 125 : 0),
@@ -57,6 +73,7 @@ const Registry = () => {
   const confirm = useConfirm();
   const dispatch = useAppDispatch();
   const classes = useStyles({ img: !!data.img });
+  const [tableHidden, setTableHidden] = useState(false);
 
   const handleReject = () => {
     confirm({ title: 'Отклонить запрос?', description: 'Это действие будет нельзя отменить', cancellationText: 'Отмена' }).then(() => {
@@ -96,7 +113,7 @@ const Registry = () => {
             <Box mt={2}>
               <Box display="flex" justifyContent="space-between">
                 <Box>
-                  {data.state === 'pending' && (
+                  {data.state === 'pending' && data.payUntil && (
                     <motion.div layoutId={`request-payUntil-${data.id}`}>
                       <Typography variant="body2" color="textPrimary">
                         Оплатить {data.payUntil}
@@ -104,20 +121,26 @@ const Registry = () => {
                     </motion.div>
                   )}
                   <motion.div layoutId={`request-price-${data.id}`} initial={{ fontSize: 14 }}>
-                    <Typography variant="h4" color="textPrimary">
+                    <Typography variant="h4" color="textPrimary" gutterBottom>
                       {getPriceStr(data.price)}
                     </Typography>
                   </motion.div>
+
+                  <Typography variant="body1" color="textSecondary">
+                    {data.content}
+                  </Typography>
                 </Box>
-                <Box>
-                  <motion.div layoutId={`request-tag-${data.id}`}>
-                    <Chip label={data.tag} color="secondary" />
-                  </motion.div>
-                </Box>
+                {data.tag && (
+                  <Box>
+                    <motion.div layoutId={`request-tag-${data.id}`}>
+                      <Chip label={data.tag} color="secondary" />
+                    </motion.div>
+                  </Box>
+                )}
               </Box>
             </Box>
             <Box mt={2}>
-              <Grid container spacing={1}>
+              <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Button
                     onClick={() => {
@@ -154,10 +177,21 @@ const Registry = () => {
                 </Grid>
               </Grid>
             </Box>
-            <Box mt={2} mb={2} height={380}>
-              <Typography variant="h6">Исполнители</Typography>
-              <DataGrid rows={data.employees} columns={columns} />
-            </Box>
+            {data.employees.length !== 0 && (
+              <Box mt={2} mb={2}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography variant="h6">Исполнители</Typography>
+                  <IconButton onClick={() => setTableHidden(!tableHidden)}>
+                    <KeyboardArrowDown className={cn(classes.collapse, { [classes.collapseActive]: tableHidden })} />
+                  </IconButton>
+                </Box>
+                <Box className={cn(classes.table, { [classes.tableHidden]: tableHidden })}>
+                  <DataGrid density="compact" rows={data.employees} columns={columns} />
+                </Box>
+              </Box>
+            )}
+
+            <QuickActions />
             {/* <List>
           {incomingRequests.map(item => (
             <Box my={1}>

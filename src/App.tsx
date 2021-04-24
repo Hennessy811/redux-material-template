@@ -1,7 +1,7 @@
-import { Box, createMuiTheme, ThemeProvider, useMediaQuery } from '@material-ui/core';
+import { Box, Button, createMuiTheme, ThemeProvider, Typography, useMediaQuery } from '@material-ui/core';
 import { ConfirmProvider } from 'material-ui-confirm';
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 import Feed from './pages/Feed';
 import Home from './pages/Home';
 import Payments from './pages/Payments';
@@ -12,7 +12,12 @@ import Notifications from './shared/components/Notifications';
 import useTheme from './shared/hooks/useTheme';
 import { AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 import { ruRU } from '@material-ui/core/locale';
+import './types.d.ts';
 import History from './pages/History';
+import QuickActions from './shared/components/QuickActions';
+import Profile from './pages/Profile';
+
+// declare module 'material-auto-rotating-carousel';
 
 const baseTheme = createMuiTheme();
 
@@ -74,11 +79,9 @@ function App() {
                 <AnimatePresence exitBeforeEnter initial={false}>
                   <Switch location={location} key={location.pathname}>
                     <Route path="/" exact>
-                      <AnimatePresence>
-                        <Layout>
-                          <Home />
-                        </Layout>
-                      </AnimatePresence>
+                      <Layout>
+                        <Home />
+                      </Layout>
                     </Route>
                     <Route path="/pay" exact>
                       <Layout>
@@ -105,6 +108,11 @@ function App() {
                         <History />
                       </Layout>
                     </Route>
+                    <Route path="/profile" exact>
+                      <Layout>
+                        <Profile />
+                      </Layout>
+                    </Route>
                     <Route path="/registry/:id" exact>
                       <Layout>
                         <Registry />
@@ -112,7 +120,22 @@ function App() {
                     </Route>
                     <Route path="/**" exact>
                       <Layout>
-                        <Box>Unknown route</Box>
+                        <Box mt={10}>
+                          <Typography variant="h1" gutterBottom align="center">
+                            404: Страница не найдена
+                          </Typography>
+                          <Box mt={6}>
+                            <Link to="/">
+                              <Button variant="contained" size="large" color="primary" fullWidth>
+                                На главную
+                              </Button>
+                            </Link>
+                          </Box>
+
+                          <Box>
+                            <QuickActions />
+                          </Box>
+                        </Box>
                       </Layout>
                     </Route>
                   </Switch>

@@ -22,8 +22,10 @@ import cn from 'classnames';
 import { RequestDataItem } from '../../shared/data/incomingRequests';
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { changeState, selectData, selectRequestItem } from '../../store/features/data';
+import { approveAll, changeState, selectData, selectRequestItem } from '../../store/features/data';
 import { RootState } from '../../store/store';
+import Onboarding from '../../shared/components/Onboarding';
+import Stories from '../../shared/components/Stories';
 
 const useStyles = makeStyles({
   root: {
@@ -75,15 +77,17 @@ const FeedItem: FC<{ item: RequestDataItem }> = ({ item }) => {
             </motion.div>
             {tag && (
               <motion.div layoutId={`request-tag-${item.id}`}>
-                <Chip label={tag} color="secondary" />
+                <Chip label={tag} color={tag === 'Внутренний' ? 'default' : 'secondary'} />
               </motion.div>
             )}
           </Box>
-          <motion.div layoutId={`request-payUntil-${item.id}`}>
-            <Typography gutterBottom variant="caption" component="p">
-              Оплатить {payUntil}
-            </Typography>
-          </motion.div>
+          {payUntil && (
+            <motion.div layoutId={`request-payUntil-${item.id}`}>
+              <Typography gutterBottom variant="caption" component="p">
+                Оплатить {payUntil}
+              </Typography>
+            </motion.div>
+          )}
           <motion.div layoutId={`request-price-${item.id}`}>
             <Typography color="textPrimary" component="p" style={{ fontSize: 18, fontWeight: 600 }}>
               {price.toLocaleString('ru', { currency: 'RUB', style: 'currency' })}
@@ -95,10 +99,10 @@ const FeedItem: FC<{ item: RequestDataItem }> = ({ item }) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button onClick={() => dispatch(changeState({ id: item.id, status: 'approved' }))} size="small" color="primary" variant="contained">
+        <Button fullWidth onClick={() => dispatch(changeState({ id: item.id, status: 'approved' }))} color="primary" variant="contained">
           Подтвердить
         </Button>
-        <Button onClick={() => dispatch(changeState({ id: item.id, status: 'changes requested' }))} size="small" color="secondary">
+        <Button fullWidth onClick={() => dispatch(changeState({ id: item.id, status: 'changes requested' }))} color="secondary">
           На доработку
         </Button>
       </CardActions>
@@ -112,10 +116,14 @@ const Home = () => {
   const classes = useStyles();
   const [hideDashboard, setHideDashboard] = useState(false);
   const { incomingRequests } = useAppSelector(selectData);
+  const dispatch = useAppDispatch();
+  const data = incomingRequests.filter(i => i.state === 'pending');
 
   return (
     <Box>
-      <Box>
+      <Stories />
+      <Box mt={2}>
+        {/* <Onboarding /> */}
         <Box display="flex" justifyContent="space-between">
           <Typography variant="h5">Текущие заказы</Typography>
           <IconButton onClick={() => setHideDashboard(!hideDashboard)}>
@@ -130,19 +138,24 @@ const Home = () => {
       <Box mt={hideDashboard ? 2 : -1}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h4">Повестка дня</Typography>
-          <IconButton>
+          <IconButton onClick={() => dispatch(approveAll())}>
             <DoneAll color="primary" />
           </IconButton>
         </Box>
         <Divider />
         <List>
-          {incomingRequests
-            .filter(i => i.state === 'pending')
-            .map(item => (
-              <Box key={item.id} my={1}>
-                <FeedItem item={item} />
-              </Box>
-            ))}
+          {data.map(item => (
+            <Box key={item.id} my={1}>
+              <FeedItem item={item} />
+            </Box>
+          ))}
+          {data.length === 0 && (
+            <Box my={10}>
+              <Typography align="center" color="textSecondary" variant="body1">
+                На сегодня все, отличная работа!
+              </Typography>
+            </Box>
+          )}
         </List>
       </Box>
     </Box>

@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: 0,
       left: 0,
       width: '100%',
+      zIndex: 1,
     },
   })
 );
