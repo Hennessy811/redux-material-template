@@ -14,7 +14,7 @@ import {
   Button,
   Chip,
 } from '@material-ui/core';
-import { DoneAll, KeyboardArrowDown } from '@material-ui/icons';
+import { DoneAll, FilterList, KeyboardArrowDown } from '@material-ui/icons';
 import React, { FC, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Dashboard from './Dashboard';
@@ -115,6 +115,7 @@ const Home = () => {
   const sm = useMediaQuery('(max-width: 600px)');
   const classes = useStyles();
   const [hideDashboard, setHideDashboard] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const { incomingRequests } = useAppSelector(selectData);
   const dispatch = useAppDispatch();
   const data = incomingRequests.filter(i => i.state === 'pending');
@@ -123,7 +124,7 @@ const Home = () => {
     <Box>
       <Stories />
       <Box mt={2}>
-        {/* <Onboarding /> */}
+        <Onboarding />
         <Box display="flex" justifyContent="space-between">
           <Typography variant="h5">Текущие заказы</Typography>
           <IconButton onClick={() => setHideDashboard(!hideDashboard)}>
@@ -138,11 +139,17 @@ const Home = () => {
       <Box mt={hideDashboard ? 2 : -1}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h4">Повестка дня</Typography>
-          <IconButton onClick={() => dispatch(approveAll())}>
-            <DoneAll color="primary" />
-          </IconButton>
+          <Box>
+            <IconButton onClick={() => setShowFilters(!showFilters)}>
+              <FilterList color="secondary" />
+            </IconButton>
+            <IconButton onClick={() => dispatch(approveAll())}>
+              <DoneAll color="primary" />
+            </IconButton>
+          </Box>
         </Box>
         <Divider />
+
         <List>
           {data.map(item => (
             <Box key={item.id} my={1}>

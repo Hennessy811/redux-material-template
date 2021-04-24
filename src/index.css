@@ -16,3 +16,9 @@ a, a:visited, a:focus, a:hover {
   text-decoration: none;
   color: inherit
 }
+
+.Slide-title-154 {
+  white-space: wrap !important;
+  overflow: auto;
+  /* text-overflow:; */
+}

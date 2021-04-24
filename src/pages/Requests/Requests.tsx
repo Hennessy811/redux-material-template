@@ -12,7 +12,7 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import { ArrowBack } from '@material-ui/icons';
+import { ArrowBack, FilterList } from '@material-ui/icons';
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { RequestDataItem } from '../../shared/data/incomingRequests';
@@ -113,14 +113,18 @@ const Requests = () => {
       <Box>
         <Box>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Box display="flex" alignItems="center" mb={1}>
+            <Box display="flex" alignItems="center" mb={1} width="100%">
               <IconButton size="small" onClick={() => history.goBack()}>
                 <ArrowBack fontSize="small" />
               </IconButton>
-              <Box ml={1}>
+              <Box ml={1} display="flex" justifyContent="space-between" alignItems="center" width="100%">
                 <Typography variant="h5" noWrap>
                   Все запросы
                 </Typography>
+
+                <IconButton>
+                  <FilterList color="secondary" />
+                </IconButton>
               </Box>
             </Box>
           </Box>

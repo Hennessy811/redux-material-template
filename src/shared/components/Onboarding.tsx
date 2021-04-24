@@ -1,10 +1,21 @@
-import { Button, useMediaQuery } from '@material-ui/core';
+import { Button, createStyles, makeStyles, Theme, useMediaQuery } from '@material-ui/core';
 import { blue, green, red } from '@material-ui/core/colors';
 import { AutoRotatingCarousel, Slide } from 'material-auto-rotating-carousel';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .Slide-title-154': {
+        whiteSpace: 'wrap !important',
+      },
+    },
+  })
+);
+
 const Onboarding = () => {
+  const classes = useStyles();
   const [open, setOpen] = useState<boolean>(!localStorage.getItem('onboarding_completed'));
 
   const onClose = () => {
@@ -14,13 +25,13 @@ const Onboarding = () => {
   const sm = useMediaQuery('(max-width: 600px)');
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      {/* <Button onClick={() => localStorage.removeItem('onboarding_completed')}>Reset</Button> */}
+    <div style={{ position: 'relative', width: '100%' }} className={classes.root}>
+      <Button onClick={() => localStorage.removeItem('onboarding_completed')}>Reset</Button>
       <AutoRotatingCarousel
         label="Приступим"
         open={open}
         mobile={sm}
-        autoPlay={!sm}
+        autoPlay={false}
         onClose={() => onClose()}
         onStart={() => onClose()}
         style={{ position: 'absolute' }}
@@ -29,22 +40,22 @@ const Onboarding = () => {
           media={<img src="http://www.icons101.com/icon_png/size_256/id_79394/youtube.png" />}
           mediaBackgroundStyle={{ backgroundColor: red[400] }}
           style={{ backgroundColor: red[600] }}
-          title="This is a very cool feature"
-          subtitle="Just using this will blow your mind."
+          title="Мобильный заказчик"
+          subtitle="Создано, чтобы держать в курсе дел"
         />
         <Slide
           media={<img src="http://www.icons101.com/icon_png/size_256/id_80975/GoogleInbox.png" />}
           mediaBackgroundStyle={{ backgroundColor: blue[400] }}
           style={{ backgroundColor: blue[600] }}
-          title="Ever wanted to be popular?"
-          subtitle="Well just mix two colors and your are good to go!"
+          title="Быстрый доступ"
+          subtitle="Самые важные данные и действия - ближе двух нажатий"
         />
         <Slide
           media={<img src="http://www.icons101.com/icon_png/size_256/id_76704/Google_Settings.png" />}
           mediaBackgroundStyle={{ backgroundColor: green[400] }}
           style={{ backgroundColor: green[600] }}
-          title="May the force be with you"
-          subtitle="The Force is a metaphysical and ubiquitous power in the Star Wars fictional universe."
+          title="Production-ready"
+          subtitle="Эта демо-версия написана сразу для прода. Just plug-n-play."
         />
       </AutoRotatingCarousel>
     </div>
