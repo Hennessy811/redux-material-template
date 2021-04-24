@@ -26,6 +26,11 @@ export interface RequestDataItem {
   type: 'single' | 'registry';
   state: RequestDataItemState;
   employees: EmployeesDataItem[];
+  responsible: {
+    fullName: string;
+    id: string;
+    phone: string;
+  };
 }
 
 const getEmployees = (amount: number) =>
@@ -36,6 +41,12 @@ const getEmployees = (amount: number) =>
     specialization: faker.name.jobTitle(),
     price: faker.datatype.number(20000),
   }));
+
+const getResponsible = () => ({
+  id: faker.datatype.uuid(),
+  fullName: `${casual.full_name}`,
+  phone: casual.phone,
+});
 
 const incomingRequests: RequestDataItem[] = [
   {
@@ -50,6 +61,7 @@ const incomingRequests: RequestDataItem[] = [
     type: 'registry',
     state: 'pending',
     employees: getEmployees(68),
+    responsible: getResponsible(),
   },
   {
     id: 'db52af72-5cf9-4aed-af75-1234ed73741a',
@@ -63,6 +75,7 @@ const incomingRequests: RequestDataItem[] = [
     type: 'registry',
     state: 'approved',
     employees: getEmployees(68),
+    responsible: getResponsible(),
   },
   {
     id: 'fa72a1c8-a831-4d3e-9950-a2f760c9db35',
@@ -76,6 +89,7 @@ const incomingRequests: RequestDataItem[] = [
     type: 'registry',
     state: 'pending',
     employees: getEmployees(42),
+    responsible: getResponsible(),
   },
   {
     id: '65d5a0b9-8f1e-43fb-9339-992f76253257',
@@ -89,6 +103,7 @@ const incomingRequests: RequestDataItem[] = [
     type: 'single',
     state: 'pending',
     employees: getEmployees(1),
+    responsible: getResponsible(),
   },
   {
     id: '65d5a0b9-8f1e-43fb-9339-992f7625325712421',
@@ -100,6 +115,7 @@ const incomingRequests: RequestDataItem[] = [
     type: 'single',
     state: 'pending',
     employees: [],
+    responsible: getResponsible(),
   },
 ];
 

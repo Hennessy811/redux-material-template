@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Divider, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
-import { ArrowBack, DoneAll, KeyboardArrowDown } from '@material-ui/icons';
+import { ArrowBack, Call, DoneAll, KeyboardArrowDown } from '@material-ui/icons';
 import { Skeleton } from '@material-ui/lab';
 import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -177,6 +177,24 @@ const Registry = () => {
                 </Grid>
               </Grid>
             </Box>
+
+            <Box my={2}>
+              <Divider />
+            </Box>
+
+            <Typography variant="h6">Ответственный</Typography>
+            <Box display="flex" alignItems="center" justifyContent="space-between">
+              <Box>
+                <Typography color="textSecondary">{data.responsible.fullName}</Typography>
+                <Typography variant="subtitle2" color="textSecondary">
+                  +7{data.responsible.phone}
+                </Typography>
+              </Box>
+              <IconButton>
+                <Call />
+              </IconButton>
+            </Box>
+
             {data.employees.length !== 0 && (
               <Box mt={2} mb={2}>
                 <Box display="flex" justifyContent="space-between">
@@ -192,13 +210,6 @@ const Registry = () => {
             )}
 
             <QuickActions />
-            {/* <List>
-          {incomingRequests.map(item => (
-            <Box my={1}>
-              <FeedItem item={item} />
-            </Box>
-          ))}
-        </List> */}
           </Box>
         </Box>
       </Box>
