@@ -26,7 +26,7 @@ const Onboarding = () => {
 
   return (
     <div style={{ position: 'relative', width: '100%' }} className={classes.root}>
-      <Button onClick={() => localStorage.removeItem('onboarding_completed')}>Reset</Button>
+      {/* <Button onClick={() => localStorage.removeItem('onboarding_completed')}>Reset</Button> */}
       <AutoRotatingCarousel
         label="Приступим"
         open={open}
