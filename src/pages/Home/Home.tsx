@@ -2,110 +2,147 @@ import {
   Box,
   Divider,
   List,
-  ListItem,
-  ListItemText,
   Typography,
-  ListItemSecondaryAction,
   IconButton,
-  Tooltip,
-  Grid,
   useMediaQuery,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  makeStyles,
+  CardActions,
+  Button,
+  Chip,
 } from '@material-ui/core';
-import { ArrowUpward, Check, Restore } from '@material-ui/icons';
-import React from 'react';
+import { DoneAll, KeyboardArrowDown } from '@material-ui/icons';
+import React, { FC, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Dashboard from './Dashboard';
+import cn from 'classnames';
+import { RequestDataItem } from '../../shared/data/incomingRequests';
+import { motion } from 'framer-motion';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { changeState, selectData, selectRequestItem } from '../../store/features/data';
+import { RootState } from '../../store/store';
 
-const agenda = {
-  today: [
-    {
-      title: 'Ожидают подтверждения',
-      subtitle: '4 группы по 2 услугам | 16 человек | 32 540 р.',
-      shortSubtitle: '16 человек | 32 540 р.',
-    },
-    {
-      title: 'Запросы от исполнителей',
-      subtitle: '2 человека | 13 251 р.',
-      shortSubtitle: '2 человека | 13 251 р.',
-    },
-  ],
-  weekly: [],
-  all: [],
-  postponed: [
-    {
-      title: 'Запросы от исполнителей',
-      subtitle: '13 251 р. | Отложено до 20.04',
-      shortSubtitle: '13 251 р. | Отложено до 20.04',
-    },
-    {
-      title: '🔁 SMM-менеджер',
-      subtitle: '6 500 р. | Отложено до 30.04',
-      shortSubtitle: '6 500 р. | Отложено до 30.04',
-    },
-  ],
+const useStyles = makeStyles({
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 140,
+  },
+  dashboard: {
+    height: 300,
+    transition: 'all 0.2s',
+    overflow: 'hidden',
+  },
+  dashboardHidden: {
+    height: 0,
+  },
+  collapse: {
+    transition: 'all 0.2s',
+  },
+  collapseActive: {
+    transform: 'rotate(180deg)',
+  },
+});
+
+const FeedItem: FC<{ item: RequestDataItem }> = ({ item }) => {
+  const classes = useStyles();
+  const { content, img, title, price, tag, payUntil, id } = item;
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+
+  return (
+    <Card>
+      <CardActionArea
+        onClick={() => {
+          history.push(`/registry/${id}`);
+        }}
+      >
+        {img && (
+          <motion.div layoutId={`request-media-${item.id}`}>
+            <CardMedia className={classes.media} image={img} title="Contemplative Reptile" />
+          </motion.div>
+        )}
+        <CardContent>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <motion.div layoutId={`request-title-${item.id}`}>
+              <Typography variant="h5" component="p">
+                {title}
+              </Typography>
+            </motion.div>
+            {tag && (
+              <motion.div layoutId={`request-tag-${item.id}`}>
+                <Chip label={tag} color="secondary" />
+              </motion.div>
+            )}
+          </Box>
+          <motion.div layoutId={`request-payUntil-${item.id}`}>
+            <Typography gutterBottom variant="caption" component="p">
+              Оплатить {payUntil}
+            </Typography>
+          </motion.div>
+          <motion.div layoutId={`request-price-${item.id}`}>
+            <Typography color="textPrimary" component="p" style={{ fontSize: 18, fontWeight: 600 }}>
+              {price.toLocaleString('ru', { currency: 'RUB', style: 'currency' })}
+            </Typography>
+          </motion.div>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {content}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button onClick={() => dispatch(changeState({ id: item.id, status: 'approved' }))} size="small" color="primary" variant="contained">
+          Подтвердить
+        </Button>
+        <Button onClick={() => dispatch(changeState({ id: item.id, status: 'changes requested' }))} size="small" color="secondary">
+          На доработку
+        </Button>
+      </CardActions>
+    </Card>
+  );
 };
 
 const Home = () => {
+  const history = useHistory();
   const sm = useMediaQuery('(max-width: 600px)');
+  const classes = useStyles();
+  const [hideDashboard, setHideDashboard] = useState(false);
+  const { incomingRequests } = useAppSelector(selectData);
 
   return (
     <Box>
       <Box>
-        <Typography variant="h4">Повестка дня</Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="h5">Текущие заказы</Typography>
+          <IconButton onClick={() => setHideDashboard(!hideDashboard)}>
+            <KeyboardArrowDown className={cn(classes.collapse, { [classes.collapseActive]: hideDashboard })} />
+          </IconButton>
+        </Box>
         <Divider />
-        <List>
-          {agenda.today.map(item => (
-            <ListItem button style={{ paddingRight: 96 }}>
-              <ListItemText primary={item.title} secondary={sm ? item.shortSubtitle : item.subtitle}></ListItemText>
-
-              <ListItemSecondaryAction>
-                <Grid container spacing={2}>
-                  <Grid item>
-                    <Tooltip title="Подтвердить все">
-                      <IconButton edge="end">
-                        <Check />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                  <Grid item>
-                    <Tooltip title="Отложить">
-                      <IconButton edge="end">
-                        <Restore color="secondary" />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                </Grid>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+        <Box className={cn(classes.dashboard, { [classes.dashboardHidden]: hideDashboard })}>
+          <Dashboard />
+        </Box>
       </Box>
-      <Box mt={4}>
-        <Typography variant="h3">Отложенные</Typography>
+      <Box mt={hideDashboard ? 2 : -1}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Повестка дня</Typography>
+          <IconButton>
+            <DoneAll color="primary" />
+          </IconButton>
+        </Box>
         <Divider />
         <List>
-          {agenda.postponed.map(item => (
-            <ListItem button style={{ paddingRight: 96 }}>
-              <ListItemText primary={item.title} secondary={sm ? item.shortSubtitle : item.subtitle}></ListItemText>
-
-              <ListItemSecondaryAction>
-                <Grid container spacing={2}>
-                  <Grid item>
-                    <Tooltip title="Подтвердить все">
-                      <IconButton edge="end">
-                        <Check />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                  <Grid item>
-                    <Tooltip title="Вернуть в повестку">
-                      <IconButton edge="end">
-                        <ArrowUpward color="secondary" />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                </Grid>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
+          {incomingRequests
+            .filter(i => i.state === 'pending')
+            .map(item => (
+              <Box key={item.id} my={1}>
+                <FeedItem item={item} />
+              </Box>
+            ))}
         </List>
       </Box>
     </Box>

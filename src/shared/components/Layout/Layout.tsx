@@ -1,28 +1,8 @@
-import {
-  Box,
-  createStyles,
-  makeStyles,
-  Theme,
-  AppBar,
-  IconButton,
-  Toolbar,
-  Typography,
-  Drawer,
-  Button,
-  Container,
-  ListItem,
-  ListItemText,
-  List,
-  GridListTile,
-  ListSubheader,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  Divider,
-} from '@material-ui/core';
-import React, { useState } from 'react';
-import { FC } from 'react';
+import { Box, createStyles, makeStyles, Theme, AppBar, Toolbar, Typography, Container } from '@material-ui/core';
+import React, { FC } from 'react';
 import BottomNav from './BottomNav';
-import { Close, ExitToApp, FormatListNumbered, Home, Inbox, Menu as MenuIcon, Payment } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
+import Logo from '../../images/logo.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,68 +10,51 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100vh',
       position: 'relative',
     },
+    name: {
+      maxWidth: 150,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      fontWeight: 100,
+      textTransform: 'uppercase',
+      fontSize: theme.typography.pxToRem(12),
+    },
+    balance: {
+      fontSize: theme.typography.pxToRem(16),
+      fontWeight: 600,
+    },
   })
 );
 
 const Layout: FC = ({ children }) => {
   const classes = useStyles();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const history = useHistory();
+  const balance = 1689540.42;
+
   return (
     <Box className={classes.root}>
       <AppBar position="sticky" color="primary">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setDrawerOpen(!drawerOpen)}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6">Наймикс</Typography>
+          <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+            <Box display="flex" alignItems="center">
+              <img src={Logo} width={24} height={24} alt="Logo" />
+              <Box ml={1}>
+                <Typography className={classes.name} onClick={() => history.push('/')}>
+                  ПАО "cskeleto.dev"
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box>
+              <Typography onClick={() => history.push('/profile')} className={classes.balance}>
+                {balance.toLocaleString('ru', { style: 'currency', currency: 'RUB' })}
+              </Typography>
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="temporary" anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <Box py={2}>
-          <Box>
-            <List>
-              <ListItem style={{ width: 250 }}>
-                <ListItemText primary="Дмитрий Малахов" secondary="csekeleto.dev Inc."></ListItemText>
-                <ListItemSecondaryAction>
-                  <IconButton edge="end">
-                    <ExitToApp />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </List>
-            <Divider />
-          </Box>
-          <List style={{ width: 300 }}>
-            <ListItem button>
-              <ListItemIcon>
-                <Home />
-              </ListItemIcon>
-              <ListItemText primary="Главная"></ListItemText>
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <Payment />
-              </ListItemIcon>
-              <ListItemText primary="Оплатить"></ListItemText>
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <FormatListNumbered />
-              </ListItemIcon>
-              <ListItemText primary="Запросы"></ListItemText>
-            </ListItem>
-            <ListItem button onClick={() => setDrawerOpen(false)}>
-              <ListItemIcon>
-                <Close />
-              </ListItemIcon>
-              <ListItemText primary="Закрыть"></ListItemText>
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-
-      <Box px={2} py={3} minHeight="calc(100vh - 56px - 56px - 48px)">
+      <Box py={3} minHeight="calc(100vh - 56px - 56px - 48px)">
         <Container maxWidth="sm">
           <Box>{children}</Box>
         </Container>

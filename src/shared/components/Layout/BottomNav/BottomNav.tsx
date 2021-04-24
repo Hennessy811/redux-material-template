@@ -1,6 +1,6 @@
-import { BottomNavigation, BottomNavigationAction, createStyles, Hidden, makeStyles, Theme } from '@material-ui/core';
-import { FormatListNumbered, Home, Payment } from '@material-ui/icons';
-import React from 'react';
+import { BottomNavigation, BottomNavigationAction, createStyles, makeStyles, Theme } from '@material-ui/core';
+import { AccountBox, ArtTrack, FormatListNumbered, History, Home } from '@material-ui/icons';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -18,32 +18,22 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const routes: Record<string, string> = {
-  '/': '/',
-  '/pay': '/pay',
-  '/requests': '/requests',
-};
-
 const BottomNav = () => {
   const classes = useStyles();
   const history = useHistory();
-
-  const bottomValue = routes[history.location.pathname] || 'home';
-
   return (
-    <Hidden smUp>
-      <BottomNavigation
-        className={classes.bottom}
-        value={bottomValue}
-        onChange={(_e, v) => {
-          history.push(v);
-        }}
-      >
-        <BottomNavigationAction label="Главная" value="/" icon={<Home />} />
-        <BottomNavigationAction label="Оплатить" value="/pay" icon={<Payment />} />
-        <BottomNavigationAction label="Запросы" value="/requests" icon={<FormatListNumbered />} />
-      </BottomNavigation>
-    </Hidden>
+    <BottomNavigation
+      className={classes.bottom}
+      value={history.location.pathname}
+      onChange={(_e, v) => {
+        history.push(v);
+      }}
+    >
+      <BottomNavigationAction label="Главная" value="/" icon={<Home />} />
+      <BottomNavigationAction label="Новости" value="/feed" icon={<ArtTrack />} />
+      <BottomNavigationAction label="Запросы" value="/requests" icon={<FormatListNumbered />} />
+      <BottomNavigationAction label="История" value="/history" icon={<History />} />
+    </BottomNavigation>
   );
 };
 
