@@ -13,24 +13,9 @@ import { motion } from 'framer-motion';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@material-ui/data-grid';
 
 const columns: GridColDef[] = [
-  // { field: 'id', headerName: 'ID', width: 70 },
   { field: 'fullName', headerName: 'ФИО', width: 160 },
   { field: 'order', headerName: 'Заказ', width: 130 },
   { field: 'specialization', headerName: 'Специальность', width: 130 },
-  // {
-  //   field: 'age',
-  //   headerName: 'Age',
-  //   type: 'number',
-  //   width: 90,
-  // },
-  // {
-  //   field: 'fullName',
-  //   headerName: 'Full name',
-  //   description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 160,
-  //   valueGetter: (params: GridValueGetterParams) => `${params.getValue('firstName') || ''} ${params.getValue('lastName') || ''}`,
-  // },
 ];
 
 const useStyles = makeStyles({
